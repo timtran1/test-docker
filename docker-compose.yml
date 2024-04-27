@@ -1,0 +1,40 @@
+version: '3'
+
+services:
+  deepsel-frontend:
+    container_name: deepsel-frontend
+    image: trung8358573/deepsel-frontend:latest
+    ports:
+      - 80:5000
+    depends_on:
+      - deepsel-api
+    environment:
+      - VITE_APP_BACKEND=http://localhost:8000
+
+  deepsel-api:
+    container_name: deepsel-api
+    image: trung8358573/deepsel-api:latest
+    ports:
+      - 8000:8000
+    depends_on:
+      - deepsel-db
+    env_file:
+      - .env
+    environment:
+      - DB_HOST=deepsel-db
+
+  deepsel-db:
+    image: postgres:alpine
+    container_name: deepsel-db
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: ${DB_USER}
+    networks:
+      - default
+
+
+volumes:
+    pg_data:
